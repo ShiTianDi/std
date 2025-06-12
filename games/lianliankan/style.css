@@ -1,0 +1,82 @@
+/* 连连看样式 */
+#game-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+}
+
+#game-board {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.card {
+    aspect-ratio: 1 / 1;
+    perspective: 1000px;
+    cursor: pointer;
+    margin: 2px;
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card.flipped .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-front {
+    background: linear-gradient(135deg, #7C3AED, #EC4899);
+}
+
+.card-back {
+    background-color: white;
+    transform: rotateY(180deg);
+    font-size: 1.5rem;
+}
+
+.card.matched {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.5s, opacity 0.5s linear;
+}
+
+/* 响应式调整 */
+@media (max-width: 640px) {
+    #game-board {
+        grid-template-columns: repeat(6, 1fr);
+    }
+    
+    .card-back {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #game-board {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

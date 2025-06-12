@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏乐园 - 登录</title>
+    
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="https://cdn.tailwindcss.com" as="script">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" as="style">
+    
+    <!-- 关键CSS内联 -->
+    <style>
+        /* 关键渲染路径CSS */
+        body { margin: 0; font-family: system-ui, -apple-system, sans-serif; }
+        .loading { opacity: 0; transition: opacity 0.3s ease; }
+        .loaded { opacity: 1; }
+    </style>
+    
+    <!-- 非关键CSS异步加载 -->
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#7C3AED',
+                        secondary: '#0EA5E9',
+                        accent: '#EC4899',
+                        light: '#F8FAFC',
+                        dark: '#1E293B',
+                        neutral: '#F1F5F9',
+                    },
+                    fontFamily: {
+                        game: ['Poppins', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-light to-neutral bg-pattern overflow-x-hidden loading">
+    <!-- 游戏元素装饰 -->
+    <div id="game-pieces"></div>
+
+    <!-- 主容器 -->
+    <div class="min-h-screen flex items-center justify-center p-4 relative z-10">
+        <!-- 登录卡片 -->
+        <div class="glass-effect rounded-2xl shadow-xl p-8 md:p-12 w-full max-w-md relative overflow-hidden transform transition-all hover:shadow-2xl">
+            <!-- 装饰光效 -->
+            <div class="absolute -top-20 -right-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-accent/20 rounded-full blur-3xl"></div>
+            
+            <!-- 卡片标题 -->
+            <div class="text-center mb-8 animate-appear" style="animation-delay: 0.1s">
+                <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold gradient-text mb-2 tracking-wider">
+                    游戏乐园
+                </h1>
+                <p class="text-dark/70 text-lg">欢迎回来，继续您的游戏之旅</p>
+            </div>
+            
+            <!-- 登录表单 -->
+            <form id="loginForm" class="space-y-6">
+                <!-- 用户名/邮箱 -->
+                <div class="animate-appear" style="animation-delay: 0.2s">
+                    <label for="loginId" class="block text-dark font-medium mb-2">用户名或邮箱</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-dark/50">
+                            <i class="fa fa-user-circle-o"></i>
+                        </span>
+                        <input type="text" id="loginId" name="loginId" 
+                            class="w-full pl-10 pr-4 py-3 rounded-lg bg-white/80 border border-white/90 text-dark placeholder-dark/40 focus:outline-none input-glow transition-all shadow-sm"
+                            placeholder="请输入用户名或邮箱">
+                    </div>
+                </div>
+                
+                <!-- 密码 -->
+                <div class="animate-appear" style="animation-delay: 0.3s">
+                    <label for="password" class="block text-dark font-medium mb-2">密码</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-dark/50">
+                            <i class="fa fa-lock"></i>
+                        </span>
+                        <input type="password" id="password" name="password" 
+                            class="w-full pl-10 pr-10 py-3 rounded-lg bg-white/80 border border-white/90 text-dark placeholder-dark/40 focus:outline-none input-glow transition-all shadow-sm"
+                            placeholder="请输入密码">
+                        <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 flex items-center pr-3 text-dark/50 hover:text-primary transition-colors">
+                            <i class="fa fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 记住登录状态和忘记密码 -->
+                <div class="animate-appear flex items-center justify-between" style="animation-delay: 0.4s">
+                    <div class="flex items-center">
+                        <input id="remember" name="remember" type="checkbox" 
+                            class="w-4 h-4 bg-white/80 border border-white/90 rounded focus:ring-2 focus:ring-primary/50 text-primary shadow-sm">
+                        <label for="remember" class="ml-2 text-dark/70 text-sm">记住我</label>
+                    </div>
+                    <a href="#" class="text-primary hover:underline text-sm font-medium">忘记密码?</a>
+                </div>
+                
+                <!-- 登录按钮 -->
+                <div class="animate-appear" style="animation-delay: 0.5s">
+                    <button type="submit" class="glass-button w-full py-3 px-4 rounded-lg font-semibold text-dark bg-primary transition-all transform hover:bg-[#6B2EDF] focus:outline-none focus:ring-2 focus:ring-primary/50 flex items-center justify-center gap-2 shadow-md">
+                        <span>登录</span>
+                        <i class="fa fa-sign-in"></i>
+                    </button>
+                </div>
+                
+                <!-- 分隔线 -->
+                <div class="animate-appear relative flex items-center my-6" style="animation-delay: 0.6s">
+                    <div class="flex-grow border-t border-dark/10"></div>
+                    <span class="flex-shrink mx-4 text-dark/40 text-sm">或者</span>
+                    <div class="flex-grow border-t border-dark/10"></div>
+                </div>
+                
+                <!-- 没有账户 -->
+                <div class="animate-appear text-center text-dark/60" style="animation-delay: 0.7s">
+                    <p>还没有账户? <a href="register.html" class="text-primary hover:underline font-medium">立即注册</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 异步加载JavaScript -->
+    <script src="js/common.js" defer></script>
+    <script defer>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 页面加载完成，显示内容
+            document.body.classList.add('loaded');
+            
+            // 创建游戏元素装饰（减少数量）
+            createGamePieces(8);
+            
+            // 密码显示/隐藏切换
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.querySelector('i').classList.toggle('fa-eye');
+                this.querySelector('i').classList.toggle('fa-eye-slash');
+            });
+            
+            // 表单提交处理
+            const loginForm = document.getElementById('loginForm');
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const loginId = document.getElementById('loginId').value;
+                const password = document.getElementById('password').value;
+                
+                if (!loginId || !password) {
+                    showNotification('请填写用户名/邮箱和密码', 'error');
+                    return;
+                }
+                
+                // 模拟登录验证
+                if (loginId && password) {
+                    showNotification('登录成功！正在跳转...', 'success');
+                    
+                    // 保存登录状态
+                    const rememberMe = document.getElementById('remember').checked;
+                    const storage = rememberMe ? localStorage : sessionStorage;
+                    storage.setItem('isLoggedIn', 'true');
+                    storage.setItem('username', loginId);
+                    
+                    // 跳转到首页
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    showNotification('用户名或密码错误', 'error');
+                }
+            });
+        });
+    </script>
+    
+    <!-- 异步加载字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+</body>
+</html>

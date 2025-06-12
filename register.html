@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏乐园 - 注册</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#7C3AED', // 紫粉色调
+                        secondary: '#0EA5E9', // 天蓝色
+                        accent: '#EC4899', // 亮粉色
+                        light: '#F8FAFC', // 浅色背景
+                        dark: '#1E293B', // 深色文本
+                        neutral: '#F1F5F9', // 中性色
+                    },
+                    fontFamily: {
+                        game: ['Poppins', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-effect {
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.8);
+            }
+            .glass-button {
+                background: rgba(255, 255, 255, 0.8);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                border: 1px solid rgba(255, 255, 255, 0.9);
+                transition: all 0.3s ease;
+            }
+            .glass-button:hover {
+                background: rgba(255, 255, 255, 0.95);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(124, 58, 237, 0.15);
+            }
+            .input-glow:focus {
+                box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
+                border-color: rgba(124, 58, 237, 0.6);
+            }
+            .game-piece {
+                position: absolute;
+                opacity: 0.8;
+                z-index: 0;
+                animation: float 6s ease-in-out infinite;
+            }
+            .bg-pattern {
+                background-image: 
+                    radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.05) 0%, transparent 20%),
+                    radial-gradient(circle at 80% 30%, rgba(14, 165, 233, 0.05) 0%, transparent 20%),
+                    radial-gradient(circle at 40% 70%, rgba(236, 72, 153, 0.05) 0%, transparent 20%);
+            }
+            @keyframes float {
+                0% { transform: translateY(0px) rotate(0deg); }
+                50% { transform: translateY(-15px) rotate(5deg); }
+                100% { transform: translateY(0px) rotate(0deg); }
+            }
+            @keyframes ripple {
+                0% { transform: scale(0.8); opacity: 1; }
+                100% { transform: scale(2); opacity: 0; }
+            }
+            @keyframes appear {
+                0% { opacity: 0; transform: translateY(20px); }
+                100% { opacity: 1; transform: translateY(0); }
+            }
+            .animate-appear {
+                animation: appear 0.6s ease forwards;
+            }
+            .ripple-effect {
+                position: relative;
+                overflow: hidden;
+            }
+            .ripple-effect:after {
+                content: "";
+                display: block;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                pointer-events: none;
+                background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+                background-repeat: no-repeat;
+                background-position: 50%;
+                transform: scale(10, 10);
+                opacity: 0;
+                transition: transform 0.5s, opacity 0.8s;
+            }
+            .ripple-effect:active:after {
+                transform: scale(0, 0);
+                opacity: 0.3;
+                transition: 0s;
+            }
+            .gradient-text {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+                background-image: linear-gradient(135deg, #7C3AED, #EC4899);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-light to-neutral bg-pattern overflow-x-hidden">
+    <!-- 游戏元素装饰 -->
+    <div id="game-pieces"></div>
+
+    <!-- 主容器 -->
+    <div class="min-h-screen flex items-center justify-center p-4 relative z-10">
+        <!-- 背景视差效果层 -->
+        <div class="absolute inset-0 opacity-30" id="parallax-bg">
+            <div class="absolute top-0 left-0 w-full h-full bg-[url('https://picsum.photos/id/160/1920/1080')] bg-cover bg-center opacity-20"></div>
+        </div>
+        
+        <!-- 注册卡片 -->
+        <div class="glass-effect rounded-2xl shadow-xl p-8 md:p-12 w-full max-w-2xl relative overflow-hidden transform transition-all hover:shadow-2xl">
+            <!-- 装饰光效 -->
+            <div class="absolute -top-20 -right-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-accent/20 rounded-full blur-3xl"></div>
+            
+            <!-- 卡片标题 -->
+            <div class="text-center mb-8 animate-appear" style="animation-delay: 0.1s">
+                <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold gradient-text mb-2 tracking-wider">
+                    游戏乐园
+                </h1>
+                <p class="text-dark/70 text-lg">加入我们，开启无限游戏乐趣</p>
+            </div>
+            
+            <!-- 注册表单 -->
+            <form id="registerForm" class="space-y-6">
+                <!-- 用户名 -->
+                <div class="animate-appear" style="animation-delay: 0.2s">
+                    <label for="username" class="block text-dark font-medium mb-2">用户名</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-dark/50">
+                            <i class="fa fa-user-circle-o"></i>
+                        </span>
+                        <input type="text" id="username" name="username" 
+                            class="w-full pl-10 pr-4 py-3 rounded-lg bg-white/80 border border-white/90 text-dark placeholder-dark/40 focus:outline-none input-glow transition-all shadow-sm"
+                            placeholder="你的游戏昵称">
+                    </div>
+                </div>
+                
+                <!-- 邮箱 -->
+                <div class="animate-appear" style="animation-delay: 0.3s">
+                    <label for="email" class="block text-dark font-medium mb-2">邮箱</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-dark/50">
+                            <i class="fa fa-envelope-o"></i>
+                        </span>
+                        <input type="email" id="email" name="email" 
+                            class="w-full pl-10 pr-4 py-3 rounded-lg bg-white/80 border border-white/90 text-dark placeholder-dark/40 focus:outline-none input-glow transition-all shadow-sm"
+                            placeholder="你的电子邮箱">
+                    </div>
+                </div>
+                
+                <!-- 手机号 -->
+                <div class="animate-appear" style="animation-delay: 0.4s">
+                    <label for="phone" class="block text-dark font-medium mb-2">手机号</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-dark/50">
+                            <i class="fa fa-phone"></i>
+                        </span>
+                        <input type="tel" id="phone" name="phone" 
+                            class="w-full pl-10 pr-4 py-3 rounded-lg bg-white/80 border border-white/90 text-dark placeholder-dark/40 focus:outline-none input-glow transition-all shadow-sm"
+                            placeholder="你的手机号码">
+                    </div>
+                </div>
+                
+                <!-- 密码 -->
+                <div class="animate-appear" style="animation-delay: 0.5s">
+                    <label for="password" class="block text-dark font-medium mb-2">密码</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-dark/50">
+                            <i class="fa fa-lock"></i>
+                        </span>
+                        <input type="password" id="password" name="password" 
+                            class="w-full pl-10 pr-4 py-3 rounded-lg bg-white/80 border border-white/90 text-dark placeholder-dark/40 focus:outline-none input-glow transition-all shadow-sm"
+                            placeholder="设置密码">
+                    </div>
+                </div>
+                
+                <!-- 确认密码 -->
+                <div class="animate-appear" style="animation-delay: 0.6s">
+                    <label for="confirmPassword" class="block text-dark font-medium mb-2">确认密码</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-dark/50">
+                            <i class="fa fa-lock"></i>
+                        </span>
+                        <input type="password" id="confirmPassword" name="confirmPassword" 
+                            class="w-full pl-10 pr-4 py-3 rounded-lg bg-white/80 border border-white/90 text-dark placeholder-dark/40 focus:outline-none input-glow transition-all shadow-sm"
+                            placeholder="再次输入密码">
+                    </div>
+                </div>
+                
+                <!-- 协议 -->
+                <div class="animate-appear flex items-start" style="animation-delay: 0.7s">
+                    <div class="flex items-center h-5">
+                        <input id="agreement" name="agreement" type="checkbox" 
+                            class="w-4 h-4 bg-white/80 border border-white/90 rounded focus:ring-2 focus:ring-primary/50 text-primary shadow-sm">
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label for="agreement" class="text-dark/70">我已阅读并同意<a href="#" class="text-primary hover:underline font-medium">服务条款</a>和<a href="#" class="text-primary hover:underline font-medium">隐私政策</a></label>
+                    </div>
+                </div>
+                
+                <!-- 注册按钮（优化后） -->
+                <div class="animate-appear" style="animation-delay: 0.8s">
+                    <button type="submit" class="ripple-effect glass-button w-full py-3 px-6 rounded-lg font-semibold text-dark bg-primary transition-all transform hover:bg-[#6B2EDF] focus:outline-none focus:ring-2 focus:ring-primary/50 flex items-center justify-center gap-2 shadow-md">
+                        <span>创建账户</span>
+                        <i class="fa fa-arrow-right"></i>
+                    </button>
+                </div>
+                
+                <!-- 已有账户 -->
+                <div class="animate-appear text-center text-dark/60" style="animation-delay: 0.9s">
+                    <p>已有账户? <a href="login.html" class="text-primary hover:underline font-medium">立即登录</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 创建游戏元素装饰
+            createGamePieces();
+            
+            // 表单提交处理
+            const registerForm = document.getElementById('registerForm');
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 表单验证
+                const username = document.getElementById('username').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const agreement = document.getElementById('agreement').checked;
+                
+                // 简单验证
+                if (!username || !email || !phone || !password || !confirmPassword) {
+                    showNotification('请填写所有必填字段', 'error');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    showNotification('两次输入的密码不一致', 'error');
+                    return;
+                }
+                
+                if (!agreement) {
+                    showNotification('请同意服务条款和隐私政策', 'error');
+                    return;
+                }
+                
+                // 模拟注册成功
+                showNotification('注册成功！正在跳转...', 'success');
+                
+                // 模拟加载延迟
+                setTimeout(() => {
+                    window.location.href = 'login.html'; // 假设登录页面是login.html
+                }, 2000);
+            });
+            
+            // 视差滚动效果
+            const parallaxBg = document.getElementById('parallax-bg');
+            window.addEventListener('mousemove', function(e) {
+                const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+                const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+                parallaxBg.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            });
+        });
+        
+        // 创建游戏元素装饰
+        function createGamePieces() {
+            const gamePiecesContainer = document.getElementById('game-pieces');
+            const pieces = [
+                // 象棋棋子
+                '<i class="fa fa-chess-king text-4xl text-primary"></i>',
+                '<i class="fa fa-chess-queen text-4xl text-secondary"></i>',
+                '<i class="fa fa-chess-rook text-4xl text-accent"></i>',
+                '<i class="fa fa-chess-bishop text-4xl text-primary"></i>',
+                '<i class="fa fa-chess-knight text-4xl text-secondary"></i>',
+                '<i class="fa fa-chess-pawn text-4xl text-accent"></i>',
+                
+                // 其他游戏元素
+                '<div class="w-10 h-10 bg-primary/80 rounded-full border-2 border-white shadow-md"></div>', // 五子棋
+                '<div class="w-10 h-10 bg-accent/80 rounded-full border-2 border-white shadow-md"></div>', // 五子棋
+                '<div class="w-12 h-4 bg-secondary/80 rounded-sm transform rotate-45 shadow-md"></div>', // 俄罗斯方块
+                '<div class="w-4 h-12 bg-primary/80 rounded-sm transform -rotate-45 shadow-md"></div>', // 俄罗斯方块
+                '<div class="w-10 h-10 bg-accent/80 rounded-sm transform rotate-12 shadow-md"></div>', // 俄罗斯方块
+                '<div class="w-10 h-10 bg-secondary/80 rounded-sm transform -rotate-12 shadow-md"></div>', // 俄罗斯方块
+            ];
+            
+            // 创建15个随机位置的游戏元素
+            for (let i = 0; i < 15; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'game-piece';
+                
+                // 随机选择一个游戏元素
+                const randomPiece = pieces[Math.floor(Math.random() * pieces.length)];
+                piece.innerHTML = randomPiece;
+                
+                // 随机位置
+                const randomX = Math.floor(Math.random() * 100);
+                const randomY = Math.floor(Math.random() * 100);
+                
+                // 随机延迟和动画
+                const delay = Math.random() * 3;
+                const size = Math.random() * 0.5 + 0.8;
+                
+                piece.style.left = `${randomX}vw`;
+                piece.style.top = `${randomY}vh`;
+                piece.style.fontSize = `${size}rem`;
+                piece.style.animationDelay = `${delay}s`;
+                
+                gamePiecesContainer.appendChild(piece);
+                
+                // 添加入场动画
+                setTimeout(() => {
+                    piece.style.transition = 'all 1s ease-out';
+                    piece.style.opacity = '0.8';
+                    piece.style.transform = 'scale(1)';
+                }, 100 * i);
+            }
+        }
+        
+        // 显示通知
+        function showNotification(message, type = 'info') {
+            // 检查是否已有通知，有则移除
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // 创建通知元素
+            const notification = document.createElement('div');
+            notification.className = `notification fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 animate-appear transform transition-all duration-300`;
+            
+            // 根据类型设置样式
+            if (type === 'success') {
+                notification.classList.add('bg-green-500', 'text-white', 'shadow-lg');
+                notification.innerHTML = `<i class="fa fa-check-circle mr-2"></i> ${message}`;
+            } else if (type === 'error') {
+                notification.classList.add('bg-red-500', 'text-white', 'shadow-lg');
+                notification.innerHTML = `<i class="fa fa-exclamation-circle mr-2"></i> ${message}`;
+            } else {
+                notification.classList.add('bg-blue-500', 'text-white', 'shadow-lg');
+                notification.innerHTML = `<i class="fa fa-info-circle mr-2"></i> ${message}`;
+            }
+            
+            // 添加到页面
+            document.body.appendChild(notification);
+            
+            // 3秒后自动移除
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

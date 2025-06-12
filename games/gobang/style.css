@@ -1,0 +1,95 @@
+/* 五子棋样式 */
+#gobang-board {
+    width: 450px;
+    height: 450px;
+    background-color: #E7C9A9; /* 保留原有的棋盘底色 */
+    position: relative;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none; /* 移除外边框 */
+}
+
+.board-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    grid-template-rows: repeat(15, 1fr);
+}
+
+/* 添加棋盘网格线 */
+.grid-cell {
+    position: relative;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+/* 水平线 */
+.grid-cell::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 0.5px; /* 减小线条粗细 */
+    background-color: #8B4513; /* 褐色线条 */
+    z-index: 1;
+}
+
+/* 垂直线 */
+.grid-cell::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 0.5px; /* 减小线条粗细 */
+    height: 100%;
+    background-color: #8B4513; /* 褐色线条 */
+    z-index: 1;
+}
+
+/* 移除所有特殊边界线处理 */
+
+/* 棋子样式 */
+.stone {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.black {
+    background: radial-gradient(circle at 30% 30%, #666, #000);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.white {
+    background: radial-gradient(circle at 30% 30%, #fff, #ccc);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.winning-stone {
+    box-shadow: 0 0 8px 2px rgba(124, 58, 237, 0.6);
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* 响应式调整 */
+@media (max-width: 640px) {
+    #gobang-board {
+        width: 100%;
+        height: 0;
+        padding-bottom: 100%;
+    }
+    
+    .stone {
+        width: 5vw;
+        height: 5vw;
+    }
+}

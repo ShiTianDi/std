@@ -1,0 +1,86 @@
+/* 象棋样式 */
+#chessboard {
+    width: 450px;
+    height: 500px;
+    background-image: url('../../img/象棋棋盘.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+}
+
+.chess-piece {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    z-index: 10;
+}
+
+.chess-piece.red {
+    background-color: #f87171;
+    color: #7f1d1d;
+    border: 2px solid #b91c1c;
+}
+
+.chess-piece.black {
+    background-color: #1f2937;
+    color: #f3f4f6;
+    border: 2px solid #111827;
+}
+
+.chess-piece.selected {
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.5);
+    transform: scale(1.1);
+}
+
+.chess-piece:hover {
+    transform: scale(1.05);
+}
+
+.chess-piece.selected:hover {
+    transform: scale(1.1);
+}
+
+.possible-move {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: rgba(124, 58, 237, 0.3);
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* 响应式调整 */
+@media (max-width: 640px) {
+    #chessboard {
+        width: 100%;
+        height: 0;
+        padding-bottom: 110%;
+    }
+    
+    .chess-piece {
+        width: 8vw;
+        height: 8vw;
+        font-size: 3vw;
+    }
+    
+    .possible-move {
+        width: 4vw;
+        height: 4vw;
+    }
+}
+
+/* 添加棋盘单元格样式 */
+.board-cell {
+    cursor: pointer;
+    z-index: 5;
+}

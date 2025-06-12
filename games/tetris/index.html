@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏乐园 - 俄罗斯方块</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/common.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#7C3AED',
+                        secondary: '#0EA5E9',
+                        accent: '#EC4899',
+                        light: '#F8FAFC',
+                        dark: '#1E293B',
+                        neutral: '#F1F5F9',
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-light to-neutral bg-pattern overflow-x-hidden">
+    <!-- 游戏元素装饰 -->
+    <div id="game-pieces"></div>
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect shadow-md transition-all duration-300">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="../../index.html" class="text-2xl font-bold gradient-text">游戏乐园</a>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="../../index.html" class="text-dark/70 hover:text-primary transition-colors font-medium">返回首页</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 pt-24 pb-16 relative z-10">
+        <div class="glass-effect rounded-xl p-6 shadow-lg mb-6">
+            <h1 class="text-2xl font-bold text-dark mb-4">俄罗斯方块</h1>
+            <p class="text-dark/70 mb-4">经典的俄罗斯方块游戏，通过旋转和移动方块，尽可能多地消除行数。</p>
+            <div class="flex space-x-4">
+                <button id="newGame" class="glass-button rounded-lg px-4 py-2 text-dark hover:bg-primary hover:text-white transition-colors">
+                    <i class="fa fa-refresh mr-2"></i>新游戏
+                </button>
+                <button id="toggleHelp" class="glass-button rounded-lg px-4 py-2 text-dark hover:bg-primary hover:text-white transition-colors">
+                    <i class="fa fa-question-circle mr-2"></i>游戏规则
+                </button>
+            </div>
+        </div>
+
+        <!-- 游戏区域 -->
+        <div class="flex flex-col md:flex-row gap-6">
+            <div class="glass-effect rounded-xl p-6 shadow-lg flex-grow">
+                <div class="max-w-md mx-auto">
+                    <div id="game-container" class="space-y-6">
+                        <div id="tetris-board" class="mx-auto border-2 border-gray-300 bg-white/30 relative">
+                            <!-- 游戏区域将在这里渲染 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-effect rounded-xl p-6 shadow-lg w-full md:w-64">
+                <h3 class="text-xl font-bold text-dark mb-4">游戏统计</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-dark/70">当前状态:</span>
+                        <span id="currentGameStatus" class="font-medium text-dark">准备开始</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-dark/70">得分:</span>
+                        <span id="score" class="font-medium text-dark">0</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-dark/70">消除行数:</span>
+                        <span id="lines" class="font-medium text-dark">0</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-dark/70">等级:</span>
+                        <span id="level" class="font-medium text-dark">1</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-dark/70">最高分:</span>
+                        <span id="bestScore" class="font-medium text-dark">-</span>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <h4 class="font-bold text-dark mb-2">下一个方块:</h4>
+                    <div id="next-piece" class="border-2 border-gray-300 bg-white/30 h-20 w-20 mx-auto">
+                        <!-- 下一个方块预览 -->
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <h4 class="font-bold text-dark mb-2">操作说明:</h4>
+                    <ul class="text-sm text-dark/70 space-y-1">
+                        <li>← → : 左右移动</li>
+                        <li>↑ : 旋转方块</li>
+                        <li>↓ : 加速下落</li>
+                        <li>空格 : 直接落到底部</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 帮助弹窗 -->
+    <div id="helpModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="glass-effect rounded-xl p-6 max-w-md mx-auto max-h-[80vh] overflow-y-auto">
+            <h2 class="text-xl font-bold text-dark mb-4">俄罗斯方块游戏规则</h2>
+            <div class="text-dark/70 space-y-3">
+                <p>俄罗斯方块是一款经典的益智游戏，游戏规则如下：</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li>方块会从屏幕顶部落下，玩家可以旋转和移动它们。</li>
+                    <li>当一行被方块填满时，该行会被消除，玩家获得分数。</li>
+                    <li>消除的行数越多，获得的分数越高。</li>
+                    <li>随着游戏进行，方块下落的速度会越来越快。</li>
+                    <li>当方块堆叠到屏幕顶部时，游戏结束。</li>
+                </ul>
+                <p class="font-medium">操作方法：</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li>使用左右箭头键移动方块</li>
+                    <li>使用上箭头键旋转方块</li>
+                    <li>使用下箭头键加速方块下落</li>
+                    <li>使用空格键使方块直接落到底部</li>
+                </ul>
+            </div>
+            <button id="closeHelp" class="mt-4 glass-button rounded-lg px-4 py-2 text-dark hover:bg-primary hover:text-white transition-colors w-full">
+                关闭
+            </button>
+        </div>
+    </div>
+
+    <script src="../../js/common.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

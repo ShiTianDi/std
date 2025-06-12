@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏乐园 - 首页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#7C3AED', // 紫粉色调
+                        secondary: '#0EA5E9', // 天蓝色
+                        accent: '#EC4899', // 亮粉色
+                        light: '#F8FAFC', // 浅色背景
+                        dark: '#1E293B', // 深色文本
+                        neutral: '#F1F5F9', // 中性色
+                    },
+                    fontFamily: {
+                        game: ['Poppins', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+
+            .glass-effect {
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.8);
+            }
+
+            .glass-button {
+                background: rgba(255, 255, 255, 0.8);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                border: 1px solid rgba(255, 255, 255, 0.9);
+                transition: all 0.3s ease;
+            }
+
+            .glass-button:hover {
+                background: rgba(255, 255, 255, 0.95);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(124, 58, 237, 0.15);
+            }
+
+            .input-glow:focus {
+                box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
+                border-color: rgba(124, 58, 237, 0.6);
+            }
+
+            .game-piece {
+                position: absolute;
+                opacity: 0.8;
+                z-index: 0;
+                animation: float 6s ease-in-out infinite;
+            }
+
+            .bg-pattern {
+                background-image:
+                    radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.05) 0%, transparent 20%),
+                    radial-gradient(circle at 80% 30%, rgba(14, 165, 233, 0.05) 0%, transparent 20%),
+                    radial-gradient(circle at 40% 70%, rgba(236, 72, 153, 0.05) 0%, transparent 20%);
+            }
+
+            @keyframes float {
+                0% {
+                    transform: translateY(0px) rotate(0deg);
+                }
+
+                50% {
+                    transform: translateY(-15px) rotate(5deg);
+                }
+
+                100% {
+                    transform: translateY(0px) rotate(0deg);
+                }
+            }
+
+            @keyframes ripple {
+                0% {
+                    transform: scale(0.8);
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+
+            @keyframes appear {
+                0% {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .animate-appear {
+                animation: appear 0.6s ease forwards;
+            }
+
+            .ripple-effect {
+                position: relative;
+                overflow: hidden;
+            }
+
+            .ripple-effect:after {
+                content: "";
+                display: block;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                pointer-events: none;
+                background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+                background-repeat: no-repeat;
+                background-position: 50%;
+                transform: scale(10, 10);
+                opacity: 0;
+                transition: transform 0.5s, opacity 0.8s;
+            }
+
+            .ripple-effect:active:after {
+                transform: scale(0, 0);
+                opacity: 0.3;
+                transition: 0s;
+            }
+
+            .gradient-text {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+                background-image: linear-gradient(135deg, #7C3AED, #EC4899);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-light to-neutral bg-pattern overflow-x-hidden">
+    <!-- 游戏元素装饰 -->
+    <div id="game-pieces"></div>
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect shadow-md transition-all duration-300">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <h1 class="text-2xl font-bold gradient-text">游戏乐园</h1>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#home" class="text-dark/70 hover:text-primary transition-colors font-medium">首页</a>
+                <a href="#game-categories" class="text-dark/70 hover:text-primary transition-colors font-medium">游戏分类</a>
+                <a href="#leaderboard" class="text-dark/70 hover:text-primary transition-colors font-medium">排行榜</a>
+                <a href="#about-us" class="text-dark/70 hover:text-primary transition-colors font-medium">关于我们</a>
+            </div>
+            <div class="flex items-center">
+                <button id="userMenu" class="glass-button rounded-full p-2 flex items-center justify-center text-dark hover:text-primary transition-colors">
+                    <i class="fa fa-user-circle-o text-xl"></i>
+                </button>
+                <button id="mobileMenu" class="ml-3 md:hidden glass-button rounded-full p-2 flex items-center justify-center text-dark hover:text-primary transition-colors">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <!-- 用户菜单下拉框 -->
+                <div id="userMenuDropdown" class="hidden absolute right-4 top-16 w-48 glass-effect rounded-lg shadow-lg z-50 animate-appear">
+                    <div class="p-4">
+                        <div class="border-b border-white/30 pb-3 mb-3">
+                            <div class="flex items-center space-x-3">
+                                <i class="fa fa-user-circle-o text-2xl text-primary"></i>
+                                <div>
+                                    <h4 class="font-bold text-dark" id="userDisplayName">未登录</h4>
+                                    <p class="text-dark/60 text-xs" id="userEmail"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <a href="#" class="block text-dark/70 hover:text-primary transition-colors py-1 px-2 rounded hover:bg-white/20">
+                                <i class="fa fa-trophy mr-2"></i>游戏大师
+                            </a>
+                            <a href="#" class="block text-dark/70 hover:text-primary transition-colors py-1 px-2 rounded hover:bg-white/20">
+                                <i class="fa fa-trophy mr-2"></i>登峰造极
+                            </a>
+                            <a href="#" class="block text-dark/70 hover:text-primary transition-colors py-1 px-2 rounded hover:bg-white/20">
+                                <i class="fa fa-trophy mr-2"></i>最强王者
+                            </a>
+                            <div class="border-t border-white/30 mt-2 pt-2">
+                                <button id="logoutBtn" class="w-full text-left text-red-500 hover:text-red-600 transition-colors py-1 px-2 rounded hover:bg-white/20">
+                                    <i class="fa fa-sign-out mr-2"></i>退出登录
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 移动端菜单 -->
+        <div id="mobileMenuContent" class="md:hidden hidden glass-effect border-t border-white/30 animate-appear">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <a href="#home" class="text-dark/70 hover:text-primary transition-colors font-medium py-2">首页</a>
+                <a href="#game-categories" class="text-dark/70 hover:text-primary transition-colors font-medium py-2">游戏分类</a>
+                <a href="#leaderboard" class="text-dark/70 hover:text-primary transition-colors font-medium py-2">排行榜</a>
+                <a href="#about-us" class="text-dark/70 hover:text-primary transition-colors font-medium py-2">关于我们</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 pt-24 pb-16 relative z-10">
+        <!-- 欢迎部分 -->
+        <section id="home" class="mb-16 text-center animate-appear">
+            <h2 class="text-[clamp(2.5rem,5vw,4rem)] font-bold gradient-text mb-4 tracking-wider">
+                探索游戏世界
+            </h2>
+            <p class="text-dark/70 text-lg max-w-2xl mx-auto">
+                欢迎来到游戏乐园，这里有各种各样精彩游戏等待您来体验。选择一款游戏，开始您的冒险之旅吧！
+            </p>
+        </section>
+
+        <!-- 游戏分类展示 -->
+        <section id="game-categories" class="mb-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 热门游戏区域 -->
+                <div class="glass-effect rounded-xl p-6 shadow-lg animate-appear" style="animation-delay: 0.1s">
+                    <div class="flex items-center mb-4">
+                        <i class="fa fa-fire text-2xl text-accent mr-3"></i>
+                        <h3 class="text-xl font-bold text-dark">热门游戏</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <a href="games/chess/index.html" class="flex items-center p-3 glass-effect rounded-lg hover:bg-white/90 transition-colors">
+                            <img src="./img/象棋.jpg" alt="象棋" class="w-12 h-12 rounded-lg mr-3 object-cover">
+                            <div>
+                                <h4 class="font-medium text-dark">象棋</h4>
+                                <p class="text-sm text-dark/60">策略对战</p>
+                            </div>
+                            <span class="ml-auto text-accent font-medium">热门</span>
+                        </a>
+                        <a href="games/gobang/index.html" class="flex items-center p-3 glass-effect rounded-lg hover:bg-white/90 transition-colors">
+                            <img src="img/五子棋.jpg" alt="五子棋棋盘" class="w-12 h-12 rounded-lg mr-3 object-cover">
+                            <div>
+                                <h4 class="font-medium text-dark">五子棋</h4>
+                                <p class="text-sm text-dark/60">经典对弈</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 休闲游戏区域 -->
+                <div class="glass-effect rounded-xl p-6 shadow-lg animate-appear" style="animation-delay: 0.2s">
+                    <div class="flex items-center mb-4">
+                        <i class="fa fa-coffee text-2xl text-secondary mr-3"></i>
+                        <h3 class="text-xl font-bold text-dark">休闲游戏</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <a href="games/number-guess/index.html" class="flex items-center p-3 glass-effect rounded-lg hover:bg-white/90 transition-colors">
+                            <img src="img/猜数字.jpg" alt="猜数字游戏界面" class="w-12 h-12 rounded-lg mr-3 object-cover">
+                            <div>
+                                <h4 class="font-medium text-dark">猜数字</h4>
+                                <p class="text-sm text-dark/60">益智解谜</p>
+                            </div>
+                        </a>
+                        <a href="games/lianliankan/index.html" class="flex items-center p-3 glass-effect rounded-lg hover:bg-white/90 transition-colors">
+                            <img src="img/消消乐.png" alt="连连看游戏界面" class="w-12 h-12 rounded-lg mr-3 object-cover">
+                            <div>
+                                <h4 class="font-medium text-dark">连连看</h4>
+                                <p class="text-sm text-dark/60">轻松消除</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 动作游戏区域 -->
+                <div class="glass-effect rounded-xl p-6 shadow-lg animate-appear" style="animation-delay: 0.3s">
+                    <div class="flex items-center mb-4">
+                        <i class="fa fa-gamepad text-2xl text-primary mr-3"></i>
+                        <h3 class="text-xl font-bold text-dark">动作游戏</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <a href="games/tetris/index.html" class="flex items-center p-3 glass-effect rounded-lg hover:bg-white/90 transition-colors">
+                            <img src="img/俄罗斯方块.jpg" alt="俄罗斯方块游戏界面" class="w-12 h-12 rounded-lg mr-3 object-cover">
+                            <div>
+                                <h4 class="font-medium text-dark">俄罗斯方块</h4>
+                                <p class="text-sm text-dark/60">经典下落</p>
+                            </div>
+                            <span class="ml-auto text-accent font-medium">热门</span>
+                        </a>
+                        <a href="#" class="flex items-center p-3 glass-effect rounded-lg hover:bg-white/90 transition-colors">
+                            <img src="https://picsum.photos/id/165/60/60" alt="待添加游戏" class="w-12 h-12 rounded-lg mr-3 object-cover">
+                            <div>
+                                <h4 class="font-medium text-dark">待添加游戏</h4>
+                                <p class="text-sm text-dark/60">即将上线</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 游戏展示区 -->
+        <section>
+            <h3 class="text-2xl font-bold text-dark mb-8 text-center animate-appear" style="animation-delay: 0.4s">精选游戏</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                <!-- 象棋 -->
+                <div class="game-card glass-effect rounded-xl overflow-hidden shadow-lg animate-appear" style="animation-delay: 0.5s">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="./img/象棋.jpg" alt="中国象棋对弈场景" class="game-image w-full h-full object-cover">
+                        <div class="absolute top-3 right-3 glass-effect rounded-full px-3 py-1 text-xs font-medium text-dark">
+                            <i class="fa fa-star text-yellow-400 mr-1"></i>4.9
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-bold text-lg text-dark mb-1">象棋</h4>
+                        <p class="text-sm text-dark/60 mb-3">策略对战游戏，挑战您的思维能力</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-dark/50">
+                                <i class="fa fa-users mr-1"></i>12.5k 玩家
+                            </span>
+                            <button onclick="window.location.href='games/chess/index.html'" class="ripple-effect glass-button rounded-lg px-3 py-1 text-sm font-medium text-dark hover:bg-primary hover:text-white transition-colors">
+                                开始游戏
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 五子棋 -->
+                <div class="game-card glass-effect rounded-xl overflow-hidden shadow-lg animate-appear" style="animation-delay: 0.6s">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="img/五子棋.jpg" alt="五子棋棋盘和棋子" class="game-image w-full h-full object-cover">
+                        <div class="absolute top-3 right-3 glass-effect rounded-full px-3 py-1 text-xs font-medium text-dark">
+                            <i class="fa fa-star text-yellow-400 mr-1"></i>4.7
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-bold text-lg text-dark mb-1">五子棋</h4>
+                        <p class="text-sm text-dark/60 mb-3">经典对弈游戏，连成五子即获胜游戏</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-dark/50">
+                                <i class="fa fa-users mr-1"></i>8.2k 玩家
+                            </span>
+                            <button onclick="window.location.href='games/gobang/index.html'" class="ripple-effect glass-button rounded-lg px-3 py-1 text-sm font-medium text-dark hover:bg-primary hover:text-white transition-colors">
+                                开始游戏
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 猜数字 -->
+                <div class="game-card glass-effect rounded-xl overflow-hidden shadow-lg animate-appear" style="animation-delay: 0.8s">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="img/猜数字.jpg" alt="猜数字游戏界面" class="game-image w-full h-full object-cover">
+                        <div class="absolute top-3 right-3 glass-effect rounded-full px-3 py-1 text-xs font-medium text-dark">
+                            <i class="fa fa-star text-yellow-400 mr-1"></i>4.5
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-bold text-lg text-dark mb-1">猜数字</h4>
+                        <p class="text-sm text-dark/60 mb-3">数字解谜游戏，挑战您的逻辑推理</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-dark/50">
+                                <i class="fa fa-users mr-1"></i>6.7k 玩家
+                            </span>
+                            <button onclick="window.location.href='games/number-guess/index.html'" class="ripple-effect glass-button rounded-lg px-3 py-1 text-sm font-medium text-dark hover:bg-primary hover:text-white transition-colors">
+                                开始游戏
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 连连看 -->
+                <div class="game-card glass-effect rounded-xl overflow-hidden shadow-lg animate-appear" style="animation-delay: 0.9s">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="img/消消乐.png" alt="连连看游戏界面" class="game-image w-full h-full object-cover">
+                        <div class="absolute top-3 right-3 glass-effect rounded-full px-3 py-1 text-xs font-medium text-dark">
+                            <i class="fa fa-star text-yellow-400 mr-1"></i>4.6
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-bold text-lg text-dark mb-1">连连看</h4>
+                        <p class="text-sm text-dark/60 mb-3">轻松的消除游戏，锻炼您的记忆力</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-dark/50">
+                                <i class="fa fa-users mr-1"></i>9.4k 玩家
+                            </span>
+                            <button onclick="window.location.href='games/lianliankan/index.html'" class="ripple-effect glass-button rounded-lg px-3 py-1 text-sm font-medium text-dark hover:bg-primary hover:text-white transition-colors">
+                                开始游戏
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 俄罗斯方块 -->
+                <div class="game-card glass-effect rounded-xl overflow-hidden shadow-lg animate-appear" style="animation-delay: 1s">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="img/俄罗斯方块.jpg" alt="俄罗斯方块游戏界面" class="game-image w-full h-full object-cover">
+                        <div class="absolute top-3 right-3 glass-effect rounded-full px-3 py-1 text-xs font-medium text-dark">
+                            <i class="fa fa-star text-yellow-400 mr-1"></i>4.8
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-bold text-lg text-dark mb-1">俄罗斯方块</h4>
+                        <p class="text-sm text-dark/60 mb-3">经典下落游戏，考验您的反应能力</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-dark/50">
+                                <i class="fa fa-users mr-1"></i>15.3k 玩家
+                            </span>
+                            <button onclick="window.location.href='games/tetris/index.html'" class="ripple-effect glass-button rounded-lg px-3 py-1 text-sm font-medium text-dark hover:bg-primary hover:text-white transition-colors">
+                                开始游戏
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 关于我们部分 -->
+    <section id="about-us" class="glass-effect py-12 mb-8 relative z-10">
+        <div class="container mx-auto px-4">
+            <h3 class="text-2xl font-bold gradient-text mb-6 text-center">关于我们</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h4 class="text-xl font-bold text-dark mb-4">游戏乐园简介</h4>
+                    <p class="text-dark/70 mb-4">
+                        游戏乐园是一家专注于提供高品质休闲游戏的平台，我们致力于为玩家创造一个充满乐趣和挑战的游戏世界。无论您是喜欢策略游戏、益智游戏还是休闲小游戏，我们都能满足您的需求。
+                    </p>
+                    <p class="text-dark/70 mb-4">
+                        我们的使命是通过创新的游戏设计和友好的用户体验，让每一位玩家都能找到属于自己的游戏乐趣。我们不断更新和完善游戏内容，确保玩家始终能够体验到最新、最有趣的游戏。
+                    </p>
+                    <div class="flex space-x-4 mt-6">
+                        <a href="#" class="glass-button rounded-lg px-4 py-2 text-dark hover:bg-primary hover:text-white transition-colors">
+                            <i class="fa fa-weibo mr-2"></i>微博
+                        </a>
+                        <a href="#" class="glass-button rounded-lg px-4 py-2 text-dark hover:bg-primary hover:text-white transition-colors">
+                            <i class="fa fa-wechat mr-2"></i>微信
+                        </a>
+                        <a href="#" class="glass-button rounded-lg px-4 py-2 text-dark hover:bg-primary hover:text-white transition-colors">
+                            <i class="fa fa-qq mr-2"></i>QQ
+                        </a>
+                    </div>
+                </div>
+                <div class="rounded-xl overflow-hidden shadow-lg">
+                    <img src="https://picsum.photos/id/1/600/400" alt="游戏乐园团队合影" class="w-full h-auto object-cover">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer id="leaderboard" class="glass-effect py-8 relative z-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold gradient-text mb-4">游戏乐园</h3>
+                    <p class="text-dark/60 text-sm">
+                        探索无限游戏乐趣，挑战您的技能和智慧。
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-dark mb-4">快速链接</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#home" class="text-dark/60 hover:text-primary transition-colors">首页</a></li>
+                        <li><a href="#game-categories" class="text-dark/60 hover:text-primary transition-colors">游戏分类</a></li>
+                        <li><a href="#leaderboard" class="text-dark/60 hover:text-primary transition-colors">排行榜</a></li>
+                        <li><a href="#about-us" class="text-dark/60 hover:text-primary transition-colors">关于我们</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-dark mb-4">排行榜</h4>
+                    <p class="text-dark/60 text-sm">
+                        排行榜功能即将上线，敬请期待！
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-dark mb-4">隐私政策</h4>
+                    <p class="text-dark/60 text-sm">
+                        我们严格遵守相关法律法规，采取必要的技术和管理措施，保护您的个人信息安全，未经您的明确授权，不会向第三方披露您的个人信息，除非法律法规另有规定。
+                    </p>
+                </div>
+            </div>
+            <div class="border-t border-white/30 mt-8 pt-6 text-center text-dark/50 text-sm">
+                <p>© 游戏乐园. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function () {
+            // 创建游戏元素装饰
+            createGamePieces();
+
+            // 移动端菜单切换
+            const mobileMenuBtn = document.getElementById('mobileMenu');
+            const mobileMenuContent = document.getElementById('mobileMenuContent');
+
+            mobileMenuBtn.addEventListener('click', function () {
+                mobileMenuContent.classList.toggle('hidden');
+            });
+
+            // 视差滚动效果
+            const parallaxBg = document.getElementById('game-pieces');
+            window.addEventListener('mousemove', function (e) {
+                const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+                const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+                parallaxBg.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            });
+
+            // 滚动时导航栏效果
+            const nav = document.querySelector('nav');
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 50) {
+                    nav.classList.add('py-2', 'backdrop-blur-lg');
+                    nav.classList.remove('py-3');
+                } else {
+                    nav.classList.add('py-3');
+                    nav.classList.remove('py-2', 'backdrop-blur-lg');
+                }
+            });
+
+            // 平滑滚动效果
+            const links = document.querySelectorAll('a[href^="#"]');
+            links.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    // 关闭移动端菜单
+                    if (!mobileMenuContent.classList.contains('hidden')) {
+                        mobileMenuContent.classList.add('hidden');
+                    }
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        // 计算目标位置，考虑导航栏高度
+                        const navHeight = nav.offsetHeight;
+                        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                        
+                        // 使用requestAnimationFrame实现平滑滚动
+                        let startPosition = window.pageYOffset;
+                        let startTime = null;
+                        const duration = 800; // 滚动持续时间（毫秒）
+                        
+                        function animation(currentTime) {
+                            if (startTime === null) startTime = currentTime;
+                            const timeElapsed = currentTime - startTime;
+                            const progress = Math.min(timeElapsed / duration, 1);
+                            const easeProgress = easeInOutCubic(progress);
+                            
+                            window.scrollTo(0, startPosition + (targetPosition - startPosition) * easeProgress);
+                            
+                            if (progress < 1) {
+                                requestAnimationFrame(animation);
+                            }
+                        }
+                        
+                        // 缓动函数
+                        function easeInOutCubic(t) {
+                            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                        }
+                        
+                        requestAnimationFrame(animation);
+                    }
+                });
+            });
+        });
+
+        // 创建游戏元素装饰
+        function createGamePieces() {
+            const gamePiecesContainer = document.getElementById('game-pieces');
+            const pieces = [
+                // 象棋棋子
+                '<i class="fa fa-chess-king text-4xl text-primary"></i>',
+                '<i class="fa fa-chess-queen text-4xl text-secondary"></i>',
+                '<i class="fa fa-chess-rook text-4xl text-accent"></i>',
+                '<i class="fa fa-chess-bishop text-4xl text-primary"></i>',
+                '<i class="fa fa-chess-knight text-4xl text-secondary"></i>',
+                '<i class="fa fa-chess-pawn text-4xl text-accent"></i>',
+
+                // 其他游戏元素
+                '<div class="w-10 h-10 bg-primary/80 rounded-full border-2 border-white shadow-md"></div>', // 五子棋
+                '<div class="w-10 h-10 bg-accent/80 rounded-full border-2 border-white shadow-md"></div>', // 五子棋
+                '<div class="w-12 h-4 bg-secondary/80 rounded-sm transform rotate-45 shadow-md"></div>', // 俄罗斯方块
+                '<div class="w-4 h-12 bg-primary/80 rounded-sm transform -rotate-45 shadow-md"></div>', // 俄罗斯方块
+                '<div class="w-10 h-10 bg-accent/80 rounded-sm transform rotate-12 shadow-md"></div>', // 俄罗斯方块
+                '<div class="w-10 h-10 bg-secondary/80 rounded-sm transform -rotate-12 shadow-md"></div>', // 俄罗斯方块
+            ];
+
+            // 创建20个随机位置的游戏元素
+            for (let i = 0; i < 20; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'game-piece';
+
+                // 随机选择一个游戏元素
+                const randomPiece = pieces[Math.floor(Math.random() * pieces.length)];
+                piece.innerHTML = randomPiece;
+
+                // 随机位置
+                const randomX = Math.floor(Math.random() * 100);
+                const randomY = Math.floor(Math.random() * 100);
+
+                // 随机延迟和动画
+                const delay = Math.random() * 3;
+                const size = Math.random() * 0.5 + 0.8;
+
+                piece.style.left = `${randomX}vw`;
+                piece.style.top = `${randomY}vh`;
+                piece.style.fontSize = `${size}rem`;
+                piece.style.animationDelay = `${delay}s`;
+
+                gamePiecesContainer.appendChild(piece);
+
+                // 添加入场动画
+                setTimeout(() => {
+                    piece.style.transition = 'all 1s ease-out';
+                    piece.style.opacity = '0.8';
+                    piece.style.transform = 'scale(1)';
+                }, 100 * i);
+            }
+        }
+    </script>
+    <!-- 引入共享JavaScript文件 -->
+    <script src="js/common.js"></script>
+</body>
+
+</html>

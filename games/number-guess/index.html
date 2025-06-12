@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏乐园 - 猜数字</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/common.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#7C3AED',
+                        secondary: '#0EA5E9',
+                        accent: '#EC4899',
+                        light: '#F8FAFC',
+                        dark: '#1E293B',
+                        neutral: '#F1F5F9',
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-light to-neutral bg-pattern overflow-x-hidden">
+    <!-- 游戏元素装饰 -->
+    <div id="game-pieces"></div>
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect shadow-md transition-all duration-300">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="../../index.html" class="text-2xl font-bold gradient-text">游戏乐园</a>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="../../index.html" class="text-dark/70 hover:text-primary transition-colors font-medium">返回首页</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 pt-24 pb-16 relative z-10">
+        <div class="glass-effect rounded-xl p-6 shadow-lg mb-6">
+            <h1 class="text-2xl font-bold text-dark mb-4">猜数字</h1>
+            <p class="text-dark/70 mb-4">我已经想好了一个1到100之间的数字，你能猜出来吗？</p>
+            <div class="flex space-x-4">
+                <button id="newGame" class="glass-button rounded-lg px-4 py-2 text-dark hover:bg-primary hover:text-white transition-colors">
+                    <i class="fa fa-refresh mr-2"></i>新游戏
+                </button>
+                <button id="toggleHelp" class="glass-button rounded-lg px-4 py-2 text-dark hover:bg-primary hover:text-white transition-colors">
+                    <i class="fa fa-question-circle mr-2"></i>游戏规则
+                </button>
+            </div>
+        </div>
+
+        <!-- 游戏区域 -->
+        <div class="flex flex-col md:flex-row gap-6">
+            <div class="glass-effect rounded-xl p-6 shadow-lg flex-grow">
+                <div class="max-w-md mx-auto">
+                    <div id="game-container" class="space-y-6">
+                        <div class="text-center">
+                            <div id="number-range" class="flex items-center justify-between mb-2">
+                                <span class="text-dark/70">1</span>
+                                <span class="text-dark/70">100</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div id="range-indicator" class="h-full bg-gradient-to-r from-primary to-accent w-full"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <input type="number" id="guess-input" min="1" max="100" 
+                                class="w-full pl-10 pr-4 py-3 rounded-lg bg-white/80 border border-white/90 text-dark placeholder-dark/40 focus:outline-none input-glow transition-all shadow-sm"
+                                placeholder="输入你的猜测 (1-100)">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-dark/50">
+                                <i class="fa fa-hashtag"></i>
+                            </span>
+                        </div>
+                        
+                        <button id="submit-guess" class="w-full glass-button py-3 px-4 rounded-lg font-semibold text-dark hover:bg-primary hover:text-white transition-colors flex items-center justify-center gap-2 shadow-md">
+                            <span>提交猜测</span>
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
+                        
+                        <div id="feedback" class="text-center text-lg font-medium text-dark/70 min-h-[28px]"></div>
+                        
+                        <div class="space-y-2">
+                            <h3 class="font-bold text-dark">猜测历史:</h3>
+                            <div id="guess-history" class="space-y-2 max-h-60 overflow-y-auto p-2">
+                                <!-- 猜测历史将在这里显示 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-effect rounded-xl p-6 shadow-lg w-full md:w-64">
+                <h3 class="text-xl font-bold text-dark mb-4">游戏统计</h3>
+                <div id="gameStats" class="space-y-4">
+                    <div>
+                        <p class="text-dark/70">当前游戏:</p>
+                        <p id="currentGameStatus" class="font-bold text-dark">进行中</p>
+                    </div>
+                    <div>
+                        <p class="text-dark/70">猜测次数:</p>
+                        <p id="guessCount" class="font-bold text-dark">0</p>
+                    </div>
+                    <div>
+                        <p class="text-dark/70">最佳记录:</p>
+                        <p id="bestRecord" class="font-bold text-primary">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 游戏规则弹窗 -->
+        <div id="helpModal" class="fixed inset-0 bg-dark/50 z-50 hidden flex items-center justify-center p-4">
+            <div class="glass-effect rounded-xl p-6 shadow-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-dark">猜数字规则</h3>
+                    <button id="closeHelp" class="text-dark/70 hover:text-primary">
+                        <i class="fa fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="text-dark/70 space-y-4">
+                    <p>猜数字是一个简单而有趣的游戏，目标是用最少的次数猜出系统随机选择的数字。</p>
+                    <h4 class="font-bold text-dark">基本规则:</h4>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li>系统会随机选择一个1到100之间的整数</li>
+                        <li>每次猜测后，系统会告诉你猜的数字是太大还是太小</li>
+                        <li>根据反馈调整你的猜测，直到猜中正确的数字</li>
+                        <li>尝试用最少的次数猜中数字，创造最佳记录</li>
+                    </ul>
+                    <h4 class="font-bold text-dark">游戏技巧:</h4>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li>使用二分法策略：每次猜测当前范围的中间值</li>
+                        <li>记住之前的猜测和反馈，缩小可能的范围</li>
+                        <li>理论上，使用最优策略最多需要7次猜测就能找到答案</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    <script src="../../js/common.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

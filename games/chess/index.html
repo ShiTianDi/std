@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏乐园 - 象棋</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/common.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#7C3AED',
+                        secondary: '#0EA5E9',
+                        accent: '#EC4899',
+                        light: '#F8FAFC',
+                        dark: '#1E293B',
+                        neutral: '#F1F5F9',
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-light to-neutral bg-pattern overflow-x-hidden">
+    <!-- 游戏元素装饰 -->
+    <div id="game-pieces"></div>
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect shadow-md transition-all duration-300">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="../../index.html" class="text-2xl font-bold gradient-text">游戏乐园</a>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="../../index.html" class="text-dark/70 hover:text-primary transition-colors font-medium">返回首页</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 pt-24 pb-16 relative z-10">
+        <div class="glass-effect rounded-xl p-6 shadow-lg mb-6">
+            <h1 class="text-2xl font-bold text-dark mb-4">中国象棋</h1>
+            <p class="text-dark/70 mb-4">双人对战的经典策略游戏，移动棋子吃掉对方的将/帅获胜。</p>
+            <div class="flex space-x-4">
+                <button id="resetGame" class="glass-button rounded-lg px-4 py-2 text-dark hover:bg-primary hover:text-white transition-colors">
+                    <i class="fa fa-refresh mr-2"></i>重新开始
+                </button>
+                <button id="toggleHelp" class="glass-button rounded-lg px-4 py-2 text-dark hover:bg-primary hover:text-white transition-colors">
+                    <i class="fa fa-question-circle mr-2"></i>游戏规则
+                </button>
+            </div>
+        </div>
+
+        <!-- 游戏区域 -->
+        <div class="flex flex-col md:flex-row gap-6">
+            <div class="glass-effect rounded-xl p-6 shadow-lg flex-grow">
+                <div id="chessboard" class="mx-auto relative">
+                    <!-- 棋盘将由JavaScript生成 -->
+                </div>
+            </div>
+            <div class="glass-effect rounded-xl p-6 shadow-lg w-full md:w-64">
+                <h3 class="text-xl font-bold text-dark mb-4">游戏信息</h3>
+                <div id="gameInfo" class="space-y-4">
+                    <div>
+                        <p class="text-dark/70">当前回合:</p>
+                        <p id="currentPlayer" class="font-bold text-primary">红方</p>
+                    </div>
+                    <div>
+                        <p class="text-dark/70">游戏状态:</p>
+                        <p id="gameStatus" class="font-bold text-dark">进行中</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 游戏规则弹窗 -->
+        <div id="helpModal" class="fixed inset-0 bg-dark/50 z-50 hidden flex items-center justify-center p-4">
+            <div class="glass-effect rounded-xl p-6 shadow-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-dark">中国象棋规则</h3>
+                    <button id="closeHelp" class="text-dark/70 hover:text-primary">
+                        <i class="fa fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="text-dark/70 space-y-4">
+                    <p>中国象棋是一种双人对战的策略游戏，目标是吃掉对方的将/帅。</p>
+                    <h4 class="font-bold text-dark">基本规则:</h4>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li>红方先行，双方轮流移动一个棋子</li>
+                        <li>将/帅不能离开九宫格</li>
+                        <li>将/帅不能直接面对（中间无子阻隔）</li>
+                        <li>棋子只能按照其特定的走法移动</li>
+                    </ul>
+                    <h4 class="font-bold text-dark">棋子走法:</h4>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>将/帅:</strong> 在九宫格内，每次只能横向或纵向移动一格</li>
+                        <li><strong>士/仕:</strong> 在九宫格内，每次只能斜向移动一格</li>
+                        <li><strong>象/相:</strong> 每次斜走两格，不能越过棋子（塞象眼）</li>
+                        <li><strong>马:</strong> 走"日"字，先横/纵向一格，再斜向一格，不能越过棋子（蹩马腿）</li>
+                        <li><strong>车:</strong> 横向或纵向移动任意格数，不能越过棋子</li>
+                        <li><strong>炮:</strong> 移动同车，但吃子时必须越过一个棋子</li>
+                        <li><strong>兵/卒:</strong> 只能向前移动一格，过河后可以向左右移动一格</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../../js/common.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
